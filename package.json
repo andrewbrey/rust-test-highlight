@@ -3,6 +3,7 @@
 	"displayName": "rust-test-highlight",
 	"description": "Give your rust tests a background color so they visually stand out from the rest of the file",
 	"version": "0.0.1",
+	"license": "MIT",
 	"engines": {
 		"vscode": "^1.86.0"
 	},
@@ -13,7 +14,19 @@
 		"onLanguage:rust"
 	],
 	"main": "./out/extension.js",
-	"contributes": {},
+	"contributes": {
+		"colors": [
+			{
+				"id": "rustTestHighlight.backgroundColor",
+				"description": "Background decoration color for tests",
+				"defaults": {
+					"dark": "#3b3b3b55",
+					"light": "#cacaca55",
+					"highContrast": "#ebebeb55"
+				}
+			}
+		]
+	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
 		"compile": "tsc -p ./",
