@@ -1,8 +1,11 @@
 import { default as init, parseFile } from "astexplorer-syn";
 import synWasmUrl from "astexplorer-syn/astexplorer_syn_bg.wasm?url";
+import { default as dlv } from "dlv";
 import * as vscode from "vscode";
+import { walkAst } from "./ast";
 
 export function activate(context: vscode.ExtensionContext) {
+	let isDev = context.extensionMode === vscode.ExtensionMode.Development;
 	let timeout: ReturnType<typeof setTimeout> | undefined = undefined;
 
 	const synReady = fetch(synWasmUrl)
@@ -21,6 +24,10 @@ export function activate(context: vscode.ExtensionContext) {
 
 	let activeEditor = vscode.window.activeTextEditor;
 
+	if (isDev) {
+		writeSampleToEditor(activeEditor);
+	}
+
 	async function updateDecorations() {
 		if (!activeEditor) {
 			return;
@@ -30,26 +37,35 @@ export function activate(context: vscode.ExtensionContext) {
 			return;
 		}
 
-		const regEx = /#\[test\]/g;
 		const text = activeEditor.document.getText();
 		const testBlocks: vscode.DecorationOptions[] = [];
 
 		try {
 			let ast = parseFile(text);
-			console.log(ast);
-			// TODO: https://github.com/lukeed/astray
-			// TODO: https://astexplorer.net/#/gist/c214b2751055c2f16d2689f706cf25bf/ef167eb406ade544ff01f31da26f7c24e7dc8ede
-		} catch (error) {}
 
-		let match;
-		while ((match = regEx.exec(text))) {
-			const startPos = activeEditor.document.positionAt(match.index);
-			const endPos = activeEditor.document.positionAt(match.index + match[0].length);
-			const decoration = {
-				range: new vscode.Range(startPos, endPos),
-			};
+			walkAst(ast, (node, _parent) => {
+				if (!activeEditor) {
+					return;
+				}
 
-			testBlocks.push(decoration);
+				if (dlv(node, "_type") === "ItemMod") {
+					if (dlv(node, "ident.to_string") === "tests") {
+						const startLine = dlv(node, "span.start.line");
+						const startCol = dlv(node, "span.start.column");
+						const endLine = dlv(node, "span.end.line");
+						const endCol = dlv(node, "span.end.column");
+
+						const startPos = new vscode.Position(clamp(startLine - 1, 0), clamp(startCol - 1, 0));
+						const endPos = new vscode.Position(clamp(endLine - 1, 0), clamp(endCol, 0));
+
+						const decoration = { range: new vscode.Range(startPos, endPos) };
+
+						testBlocks.push(decoration);
+					}
+				}
+			});
+		} catch (error) {
+			console.error(error);
 		}
 
 		activeEditor.setDecorations(testDecoration, testBlocks);
@@ -94,3 +110,42 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 export function deactivate() {}
+
+function clamp(num: number, min?: number, max?: number) {
+	if (min !== undefined && num < min) {
+		return min;
+	}
+
+	if (max !== undefined && num > max) {
+		return max;
+	}
+
+	return num;
+}
+
+function writeSampleToEditor(editor?: vscode.TextEditor) {
+	setTimeout(() => {
+		editor?.edit((b) => {
+			b.insert(
+				new vscode.Position(0, 0),
+				`
+	
+					
+// cool comment but not part of the module
+
+/// some docs
+///
+///
+/// wooo
+#[cfg(test)]
+mod tests {
+		#[test]
+		fn it_works() {
+				
+		}
+}							
+			`
+			);
+		});
+	}, 500);
+}
