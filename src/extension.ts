@@ -37,6 +37,8 @@ export function activate(context: vscode.ExtensionContext) {
 		try {
 			let ast = parseFile(text);
 			console.log(ast);
+			// TODO: https://github.com/lukeed/astray
+			// TODO: https://astexplorer.net/#/gist/c214b2751055c2f16d2689f706cf25bf/ef167eb406ade544ff01f31da26f7c24e7dc8ede
 		} catch (error) {}
 
 		let match;
