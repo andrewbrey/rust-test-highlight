@@ -1,11 +1,27 @@
 {
 	"compilerOptions": {
-		"module": "Node16",
-		"target": "ES2022",
-		"outDir": "out",
-		"lib": ["ES2022"],
-		"sourceMap": true,
 		"rootDir": "src",
-		"strict": true
-	}
+		"outDir": "dist",
+		// build
+		"target": "ESNext",
+		"module": "ESNext",
+		"skipLibCheck": true,
+		"composite": true,
+		"sourceMap": true,
+		// bundler
+		"moduleResolution": "bundler",
+		"allowImportingTsExtensions": true,
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"noEmit": true,
+		// linting
+		"strict": true,
+		"noImplicitReturns": true,
+		"exactOptionalPropertyTypes": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noFallthroughCasesInSwitch": true,
+		"noImplicitOverride": true
+	},
+	"include": ["src", "package.json"]
 }
