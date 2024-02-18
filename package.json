@@ -7,7 +7,12 @@
 	"categories": [
 		"Other"
 	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/andrewbrey/rust-test-highlight.git"
+	},
 	"license": "MIT",
+	"publisher": "andrewbrey",
 	"type": "commonjs",
 	"main": "./dist/extension.js",
 	"scripts": {
@@ -50,5 +55,9 @@
 	"engines": {
 		"vscode": "^1.86.0"
 	},
+	"extensionKind": [
+		"ui",
+		"workspace"
+	],
 	"pricing": "Free"
 }
