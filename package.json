@@ -31,6 +31,9 @@
 	"activationEvents": [
 		"onLanguage:rust"
 	],
+	"dependencies": {
+		"astexplorer-syn": "2.0.15"
+	},
 	"devDependencies": {
 		"@types/node": "18.x",
 		"@types/vscode": "^1.86.0",

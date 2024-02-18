@@ -21,7 +21,8 @@
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
 		"noFallthroughCasesInSwitch": true,
-		"noImplicitOverride": true
+		"noImplicitOverride": true,
+		"types": ["vite/client"]
 	},
 	"include": ["src", "package.json"]
 }

@@ -1,7 +1,18 @@
+import { default as init, parseFile } from "astexplorer-syn";
+import synWasmUrl from "astexplorer-syn/astexplorer_syn_bg.wasm?url";
 import * as vscode from "vscode";
 
 export function activate(context: vscode.ExtensionContext) {
 	let timeout: ReturnType<typeof setTimeout> | undefined = undefined;
+
+	const synReady = fetch(synWasmUrl)
+		.then((response) => init(response))
+		.catch((e) => {
+			console.error(e);
+			vscode.window.showErrorMessage(
+				`Failed to load Rust language parser. Check extension host logs for details.`
+			);
+		});
 
 	const testDecoration = vscode.window.createTextEditorDecorationType({
 		// use a themable color. See package.json for the declaration and default values.
@@ -10,14 +21,23 @@ export function activate(context: vscode.ExtensionContext) {
 
 	let activeEditor = vscode.window.activeTextEditor;
 
-	function updateDecorations() {
+	async function updateDecorations() {
 		if (!activeEditor) {
+			return;
+		}
+
+		if (!(await synReady)) {
 			return;
 		}
 
 		const regEx = /#\[test\]/g;
 		const text = activeEditor.document.getText();
 		const testBlocks: vscode.DecorationOptions[] = [];
+
+		try {
+			let ast = parseFile(text);
+			console.log(ast);
+		} catch (error) {}
 
 		let match;
 		while ((match = regEx.exec(text))) {
