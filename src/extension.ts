@@ -20,6 +20,7 @@ export function activate(context: vscode.ExtensionContext) {
 	const testDecoration = vscode.window.createTextEditorDecorationType({
 		// use a themable color. See package.json for the declaration and default values.
 		backgroundColor: { id: "rustTestHighlight.backgroundColor" },
+		isWholeLine: true,
 	});
 
 	let activeEditor = vscode.window.activeTextEditor;
