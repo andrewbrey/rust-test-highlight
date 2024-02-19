@@ -91,7 +91,7 @@ fn test_add() {}
 }
 ```
 
-Note that any color recognized by VS Code's settings parsing as a color will work, so `rgb`, `rgba`, `hex` and `hex with alpha` all will work just fine, and it's recommended that you _do include_ an alpha value (ideall, a pretty low one) so that the highlight doesn't interfere with other decorations, color themes, or syntax highlighting.
+Note that any color recognized as a color by VS Code's settings parsing will work, so `rgb`, `rgba`, `hex` and `hex with alpha` all will work just fine, and it's recommended that you _do include_ an alpha value (ideally, a pretty low one) so that the highlight doesn't interfere with other decorations, color themes, or syntax highlighting.
 
 ## License
 
