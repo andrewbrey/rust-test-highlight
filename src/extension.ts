@@ -7,6 +7,7 @@ import { walkAst } from "./ast";
 export function activate(context: vscode.ExtensionContext) {
 	const isDev = context.extensionMode === vscode.ExtensionMode.Development;
 	let timeout: ReturnType<typeof setTimeout> | undefined = undefined;
+	let testDecoration: vscode.TextEditorDecorationType | undefined = undefined;
 
 	const synReady = fetch(synWasmUrl)
 		.then((response) => init(response))
@@ -16,14 +17,6 @@ export function activate(context: vscode.ExtensionContext) {
 				`Failed to load Rust language parser. Check extension host logs for details.`
 			);
 		});
-
-	const testDecoration = vscode.window.createTextEditorDecorationType({
-		// use a themable color. See package.json for the declaration and default values.
-		backgroundColor: { id: "rustTestHighlight.backgroundColor" },
-		// IDEA: should this be user configurable?
-		isWholeLine: true,
-		rangeBehavior: vscode.DecorationRangeBehavior.ClosedClosed,
-	});
 
 	let activeEditor = vscode.window.activeTextEditor;
 
@@ -83,10 +76,27 @@ export function activate(context: vscode.ExtensionContext) {
 			if (isDev) {
 				console.error(error);
 			}
+
+			// we failed to parse or walk the AST, so just bail and
+			// don't do anything with the decorations that exist
+			return;
 		}
 
 		if (testBlocks.length > 0) {
+			// we have tests to highlight, create the decoration if one does not yet exist
+			testDecoration ??= vscode.window.createTextEditorDecorationType({
+				// use a themable color. See package.json for the declaration and default values.
+				backgroundColor: { id: "rustTestHighlight.backgroundColor" },
+				// IDEA: should this be user configurable?
+				isWholeLine: true,
+				rangeBehavior: vscode.DecorationRangeBehavior.ClosedClosed,
+			});
+
 			activeEditor.setDecorations(testDecoration, testBlocks);
+		} else {
+			// we do not have tests to highlight, so get rid of the decorations if they still exist
+			testDecoration?.dispose();
+			testDecoration = undefined;
 		}
 	}
 
