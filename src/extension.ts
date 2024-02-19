@@ -5,6 +5,7 @@ import * as vscode from "vscode";
 import { walkAst } from "./ast";
 
 export function activate(context: vscode.ExtensionContext) {
+	const isDev = context.extensionMode === vscode.ExtensionMode.Development;
 	let timeout: ReturnType<typeof setTimeout> | undefined = undefined;
 
 	const synReady = fetch(synWasmUrl)
@@ -42,7 +43,7 @@ export function activate(context: vscode.ExtensionContext) {
 		const testBlocks: vscode.DecorationOptions[] = [];
 
 		try {
-			let ast = parseFile(text);
+			const ast = parseFile(text);
 
 			walkAst(ast, (node, _parent): false | void => {
 				if (!activeEditor) {
@@ -77,7 +78,10 @@ export function activate(context: vscode.ExtensionContext) {
 				}
 			});
 		} catch (error) {
-			console.error(error);
+			// TODO: allow a user to opt in to seeing errors?
+			if (isDev) {
+				console.error(error);
+			}
 		}
 
 		if (testBlocks.length > 0) {

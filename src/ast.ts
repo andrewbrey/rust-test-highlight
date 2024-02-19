@@ -20,9 +20,9 @@ function walk(node: Node, parent: MaybeNode, cb: Callback, isNode: NodeCheck) {
 		return;
 	}
 
-	for (let key in node) {
+	for (const key in node) {
 		if (Object.prototype.hasOwnProperty.call(node, key)) {
-			let value = node[key] as MaybeNode | Array<MaybeNode>;
+			const value = node[key] as MaybeNode | Array<MaybeNode>;
 
 			if (Array.isArray(value)) {
 				walkArray(value, node, cb, isNode);
