@@ -6,6 +6,12 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## [0.1.4] - 2024-02-19
+
+### Fixed
+
+- Remove highlights from the file when there is no `tests` module (#1).
+
 ## [0.1.3] - 2024-02-18
 
 - Initial release
