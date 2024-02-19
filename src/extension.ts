@@ -20,6 +20,7 @@ export function activate(context: vscode.ExtensionContext) {
 	const testDecoration = vscode.window.createTextEditorDecorationType({
 		// use a themable color. See package.json for the declaration and default values.
 		backgroundColor: { id: "rustTestHighlight.backgroundColor" },
+		// IDEA: should this be user configurable?
 		isWholeLine: true,
 	});
 
@@ -44,17 +45,28 @@ export function activate(context: vscode.ExtensionContext) {
 		try {
 			let ast = parseFile(text);
 
-			walkAst(ast, (node, _parent) => {
+			walkAst(ast, (node, _parent): false | void => {
 				if (!activeEditor) {
-					return;
+					return false;
 				}
 
 				if (dlv(node, "_type") === "ItemMod") {
+					// IDEA: should the name of the test module be configurable by a user?
 					if (dlv(node, "ident.to_string") === "tests") {
 						const startLine = dlv(node, "span.start.line");
 						const startCol = dlv(node, "span.start.column");
 						const endLine = dlv(node, "span.end.line");
 						const endCol = dlv(node, "span.end.column");
+
+						const hasRangeInfo =
+							typeof startLine === "number" &&
+							typeof startCol === "number" &&
+							typeof endLine === "number" &&
+							typeof endCol === "number";
+
+						if (!hasRangeInfo) {
+							return false;
+						}
 
 						const startPos = new vscode.Position(clamp(startLine - 1, 0), clamp(startCol - 1, 0));
 						const endPos = new vscode.Position(clamp(endLine - 1, 0), clamp(endCol, 0));
@@ -69,7 +81,9 @@ export function activate(context: vscode.ExtensionContext) {
 			console.error(error);
 		}
 
-		activeEditor.setDecorations(testDecoration, testBlocks);
+		if (testBlocks.length > 0) {
+			activeEditor.setDecorations(testDecoration, testBlocks);
+		}
 	}
 
 	function triggerUpdateDecorations(throttle = false) {
