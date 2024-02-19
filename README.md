@@ -9,6 +9,15 @@
 
 <p align="center">Highlight your inline Rust tests with a customizable background color so they stand out in your editor.</p>
 
+<p align="center">
+	<a href="https://marketplace.visualstudio.com/items?itemName=andrewbrey.rust-test-highlight">
+		<img src="https://img.shields.io/visual-studio-marketplace/d/andrewbrey.rust-test-highlight?style=for-the-badge&logo=visualstudiocode" alt="Visual Studio Marketplace Downloads">
+	</a>
+	<a href="https://github.com/andrewbrey/rust-test-highlight/blob/main/LICENSE">
+		<img src="https://img.shields.io/github/license/andrewbrey/rust-test-highlight?style=for-the-badge" alt="GitHub License">
+	</a>
+</p>
+
 ---
 
 ## Demo
@@ -24,6 +33,8 @@ That's why I created the `Rust Test Highlight` extension to automatically apply 
 Once installed, the extension will automatically activate whenever you open a file with the `rust` language mode, and apply your chosen highlight color (or the defaults if you don't care to customize it) to the inline `tests` module in your open editors.
 
 As of now, this is the extent of the test code that is highlighted, and free `#[test]` functions that are not part of a `mod tests` are not highlighted. This is for the simple reason that using a `tests` module is recommended [by the Rust documentation](https://doc.rust-lang.org/book/ch11-03-test-organization.html#the-tests-module-and-cfgtest). Further, integration tests (or in general, tests which aren't part of an inline module and are in a file that is already well-identified as being test code because the file is called, for example `test.rs`) are not highlighted. In short, the goal of this extension is to make it easier to spot inline tests, and it encourages the use of the `tests` module convention when doing so.
+
+> **Note** - your Rust code is transformed into an AST by the [syn crate](https://crates.io/crates/syn) compiled to WebAssembly. This AST is then introspected to find the `tests` module and determine the editor range that should be highlighted. This isn't need to know information, I just think it's neat.
 
 ### Examples Of Highlighting Scenarios
 
