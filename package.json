@@ -56,7 +56,7 @@
 	"engines": {
 		"vscode": "^1.86.0"
 	},
-	"icon": "./docs/logo.png",
+	"icon": "./docs/logo_large.png",
 	"extensionKind": [
 		"ui",
 		"workspace"
