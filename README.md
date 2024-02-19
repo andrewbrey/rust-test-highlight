@@ -2,7 +2,7 @@
 
 > Highlight your inline Rust tests with a customizable background color so they stand out in your editor.
 
-![Demo](./docs/demo.mp4)
+<video src='./docs/demo.mp4' />
 
 ## Install
 
