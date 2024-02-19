@@ -1,7 +1,7 @@
 {
 	"name": "rust-test-highlight",
 	"displayName": "Rust Test Highlight",
-	"version": "0.1.2",
+	"version": "0.1.3",
 	"private": false,
 	"description": "Highlight your inline Rust tests with a customizable background color so they stand out in your editor.",
 	"categories": [
