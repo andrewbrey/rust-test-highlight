@@ -1,6 +1,7 @@
 .vscode-test/
 *.vsix
 *.tsbuildinfo
+vite.config.mts.timestamp*
 
 ### Deno ###
 /.idea/
@@ -42,7 +43,6 @@
 
 # Icon must end with two \r
 Icon
-
 
 # Thumbnails
 ._*

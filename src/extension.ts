@@ -5,7 +5,6 @@ import * as vscode from "vscode";
 import { walkAst } from "./ast";
 
 export function activate(context: vscode.ExtensionContext) {
-	let isDev = context.extensionMode === vscode.ExtensionMode.Development;
 	let timeout: ReturnType<typeof setTimeout> | undefined = undefined;
 
 	const synReady = fetch(synWasmUrl)
@@ -26,7 +25,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	let activeEditor = vscode.window.activeTextEditor;
 
-	if (isDev) {
+	if (import.meta.env.MODE === "development") {
 		writeSampleToEditor(activeEditor);
 	}
 

@@ -16,6 +16,7 @@
 	"type": "commonjs",
 	"main": "./dist/extension.js",
 	"scripts": {
+		"dev": "vite build --mode=development",
 		"build": "vite build",
 		"lint": "eslint src --ext ts",
 		"vscode:prepublish": "npm run build"
