@@ -18,6 +18,7 @@ export function activate(context: vscode.ExtensionContext) {
 		});
 
 	const testDecoration = vscode.window.createTextEditorDecorationType({
+		rangeBehavior: vscode.DecorationRangeBehavior.ClosedClosed,
 		// use a themable color. See package.json for the declaration and default values.
 		backgroundColor: { id: "rustTestHighlight.backgroundColor" },
 		// IDEA: should this be user configurable?
