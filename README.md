@@ -22,6 +22,12 @@
 
 ## Demo
 
+**Screenshot Demo**
+
+![Demonstration of code highlighting for an inline "tests" module in a rust file. There is source code displayed, and the code for the inline tests has a lighter background color than the rest of the file.](docs/demo.png)
+
+**Video Demo**
+
 https://github.com/andrewbrey/rust-test-highlight/assets/34140052/93fa6660-f4f5-4dc5-8680-e312a3c28d68
 
 ## Motivation and How it Works
