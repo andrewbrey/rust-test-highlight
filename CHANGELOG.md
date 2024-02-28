@@ -8,13 +8,13 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ### Added
 
-- Add a simple screenshot demo to README (#3)
+- Add a simple screenshot demo to README [#3](https://github.com/andrewbrey/rust-test-highlight/issues/3)
 
 ## [0.1.4] - 2024-02-19
 
 ### Fixed
 
-- Remove highlights from the file when there is no `tests` module (#1).
+- Remove highlights from the file when there is no `tests` module [#1](https://github.com/andrewbrey/rust-test-highlight/issues/1).
 
 ## [0.1.3] - 2024-02-18
 
