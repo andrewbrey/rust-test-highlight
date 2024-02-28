@@ -6,6 +6,10 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+### Added
+
+- Add a simple screenshot demo to README (#3)
+
 ## [0.1.4] - 2024-02-19
 
 ### Fixed
