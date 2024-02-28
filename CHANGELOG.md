@@ -6,8 +6,11 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## [0.1.5] - 2024-02-27
+
 ### Added
 
+- Allow highlighting `tests` modules found within _nested_ inline modules [#2](https://github.com/andrewbrey/rust-test-highlight/issues/2)
 - Add a simple screenshot demo to README [#3](https://github.com/andrewbrey/rust-test-highlight/issues/3)
 
 ## [0.1.4] - 2024-02-19
