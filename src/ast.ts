@@ -25,7 +25,7 @@ function walk(node: Node, parent: MaybeNode, cb: Callback, isNode: NodeCheck) {
 			const value = node[key] as MaybeNode | Array<MaybeNode>;
 
 			if (Array.isArray(value)) {
-				walkArray(value, node, cb, isNode);
+				walkArray(value.flat(Infinity), node, cb, isNode);
 			} else if (isNode(value)) {
 				walk(value as Node, node, cb, isNode);
 			}
