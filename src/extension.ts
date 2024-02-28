@@ -162,6 +162,46 @@ function writeSampleToEditor(editor?: vscode.TextEditor) {
 					
 // cool comment but not part of the module
 
+mod nested {
+	pub fn add() {}
+
+	mod nested_again {
+		/*
+		
+		some comments
+
+
+
+		*/
+
+		#[cfg(test)]
+		mod not_tests {
+				#[test]
+				fn test() {
+	
+				}
+		}
+
+		/// nested docs
+		/// wooooo
+		#[cfg(test)]
+		mod tests {
+				#[test]
+				fn test() {
+	
+				}
+		}
+	}
+
+	#[cfg(test)]
+	mod tests {
+			#[test]
+			fn test() {
+
+			}
+	}
+}
+
 /// some docs
 ///
 ///
@@ -169,7 +209,7 @@ function writeSampleToEditor(editor?: vscode.TextEditor) {
 #[cfg(test)]
 mod tests {
 		#[test]
-		fn it_works() {
+		fn test() {
 				
 		}
 }							
