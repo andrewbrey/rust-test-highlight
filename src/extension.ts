@@ -1,8 +1,8 @@
+import { walkAst } from "@andrewbrey/walkast";
 import { default as init, parseFile } from "astexplorer-syn";
 import synWasmUrl from "astexplorer-syn/astexplorer_syn_bg.wasm?url";
 import { default as dlv } from "dlv";
 import * as vscode from "vscode";
-import { walkAst } from "./ast";
 
 export function activate(context: vscode.ExtensionContext) {
 	const isDev = context.extensionMode === vscode.ExtensionMode.Development;

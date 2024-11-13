@@ -11,7 +11,7 @@
 
 <p align="center">
 	<a href="https://marketplace.visualstudio.com/items?itemName=andrewbrey.rust-test-highlight">
-		<img src="https://img.shields.io/visual-studio-marketplace/d/andrewbrey.rust-test-highlight?style=for-the-badge&logo=visualstudiocode" alt="Visual Studio Marketplace Downloads">
+		<img src="https://img.shields.io/visual-studio-marketplace/i/andrewbrey.rust-test-highlight?style=for-the-badge&logo=visualstudiocode" alt="Visual Studio Marketplace Installs">
 	</a>
 	<a href="https://github.com/andrewbrey/rust-test-highlight/blob/main/LICENSE">
 		<img src="https://img.shields.io/github/license/andrewbrey/rust-test-highlight?style=for-the-badge" alt="GitHub License">
