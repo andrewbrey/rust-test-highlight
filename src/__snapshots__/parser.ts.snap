@@ -1,0 +1,301 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`clamp > clamps values correctly 1`] = `
+[
+  {
+    "actual": 5,
+    "expected": 5,
+    "input": [
+      5,
+    ],
+    "passed": true,
+  },
+  {
+    "actual": -10,
+    "expected": -10,
+    "input": [
+      -10,
+    ],
+    "passed": true,
+  },
+  {
+    "actual": 0,
+    "expected": 0,
+    "input": [
+      0,
+    ],
+    "passed": true,
+  },
+  {
+    "actual": 5,
+    "expected": 5,
+    "input": [
+      3,
+      5,
+    ],
+    "passed": true,
+  },
+  {
+    "actual": -10,
+    "expected": -10,
+    "input": [
+      -20,
+      -10,
+    ],
+    "passed": true,
+  },
+  {
+    "actual": 5,
+    "expected": 5,
+    "input": [
+      10,
+      undefined,
+      5,
+    ],
+    "passed": true,
+  },
+  {
+    "actual": 15,
+    "expected": 15,
+    "input": [
+      20,
+      undefined,
+      15,
+    ],
+    "passed": true,
+  },
+  {
+    "actual": 5,
+    "expected": 5,
+    "input": [
+      3,
+      5,
+      10,
+    ],
+    "passed": true,
+  },
+  {
+    "actual": 10,
+    "expected": 10,
+    "input": [
+      15,
+      5,
+      10,
+    ],
+    "passed": true,
+  },
+  {
+    "actual": 7,
+    "expected": 7,
+    "input": [
+      7,
+      5,
+      10,
+    ],
+    "passed": true,
+  },
+  {
+    "actual": 0,
+    "expected": 0,
+    "input": [
+      0,
+      -5,
+      5,
+    ],
+    "passed": true,
+  },
+  {
+    "actual": 1,
+    "expected": 1,
+    "input": [
+      0,
+      1,
+      10,
+    ],
+    "passed": true,
+  },
+  {
+    "actual": -1,
+    "expected": -1,
+    "input": [
+      0,
+      -10,
+      -1,
+    ],
+    "passed": true,
+  },
+]
+`;
+
+exports[`findRustTestModules > finds mod tests at end of file 1`] = `
+[
+  {
+    "endColumn": 1,
+    "endLine": 7,
+    "startColumn": 0,
+    "startLine": 4,
+  },
+]
+`;
+
+exports[`findRustTestModules > finds mod tests at start of file 1`] = `
+[
+  {
+    "endColumn": 1,
+    "endLine": 3,
+    "startColumn": 0,
+    "startLine": 0,
+  },
+]
+`;
+
+exports[`findRustTestModules > finds multiple mod tests blocks 1`] = `
+[
+  {
+    "endColumn": 1,
+    "endLine": 4,
+    "startColumn": 0,
+    "startLine": 1,
+  },
+  {
+    "endColumn": 3,
+    "endLine": 11,
+    "startColumn": 2,
+    "startLine": 8,
+  },
+]
+`;
+
+exports[`findRustTestModules > finds single mod tests block 1`] = `
+[
+  {
+    "endColumn": 1,
+    "endLine": 4,
+    "startColumn": 0,
+    "startLine": 1,
+  },
+]
+`;
+
+exports[`findRustTestModules > handles nested braces in mod tests 1`] = `
+[
+  {
+    "endColumn": 1,
+    "endLine": 9,
+    "startColumn": 0,
+    "startLine": 1,
+  },
+]
+`;
+
+exports[`findVitestBlocks > finds multiple vitest blocks 1`] = `
+[
+  {
+    "endColumn": 1,
+    "endLine": 4,
+    "startColumn": 0,
+    "startLine": 0,
+  },
+  {
+    "endColumn": 1,
+    "endLine": 10,
+    "startColumn": 0,
+    "startLine": 6,
+  },
+]
+`;
+
+exports[`findVitestBlocks > finds single vitest block 1`] = `
+[
+  {
+    "endColumn": 1,
+    "endLine": 2,
+    "startColumn": 0,
+    "startLine": 0,
+  },
+]
+`;
+
+exports[`findVitestBlocks > finds vitest block with whitespace variations 1`] = `
+[
+  {
+    "endColumn": 1,
+    "endLine": 2,
+    "startColumn": 0,
+    "startLine": 0,
+  },
+]
+`;
+
+exports[`findVitestBlocks > handles nested braces in vitest block 1`] = `
+[
+  {
+    "endColumn": 1,
+    "endLine": 6,
+    "startColumn": 0,
+    "startLine": 0,
+  },
+]
+`;
+
+exports[`findVitestBlocks > handles vitest block at end of file 1`] = `
+[
+  {
+    "endColumn": 1,
+    "endLine": 4,
+    "startColumn": 0,
+    "startLine": 2,
+  },
+]
+`;
+
+exports[`findVitestBlocks > handles vitest block at start of file 1`] = `
+[
+  {
+    "endColumn": 1,
+    "endLine": 2,
+    "startColumn": 0,
+    "startLine": 0,
+  },
+]
+`;
+
+exports[`sample code > parses Rust sample code and captures all test modules 1`] = `
+[
+  {
+    "endColumn": 3,
+    "endLine": 33,
+    "startColumn": 2,
+    "startLine": 28,
+  },
+  {
+    "endColumn": 2,
+    "endLine": 42,
+    "startColumn": 1,
+    "startLine": 37,
+  },
+  {
+    "endColumn": 1,
+    "endLine": 55,
+    "startColumn": 0,
+    "startLine": 50,
+  },
+]
+`;
+
+exports[`sample code > parses TypeScript sample code and captures all vitest blocks 1`] = `
+[
+  {
+    "endColumn": 1,
+    "endLine": 20,
+    "startColumn": 0,
+    "startLine": 10,
+  },
+  {
+    "endColumn": 1,
+    "endLine": 37,
+    "startColumn": 0,
+    "startLine": 27,
+  },
+]
+`;

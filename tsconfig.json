@@ -22,7 +22,17 @@
 		"noUnusedParameters": true,
 		"noFallthroughCasesInSwitch": true,
 		"noImplicitOverride": true,
-		"types": ["vite/client"]
+		"noImplicitAny": true,
+		"noUncheckedIndexedAccess": true,
+		"types": [
+			"vite/client",
+			"mocha",
+			"node",
+			"vitest/importMeta"
+		]
 	},
-	"include": ["src", "package.json"]
+	"include": [
+		"src",
+		"package.json"
+	]
 }

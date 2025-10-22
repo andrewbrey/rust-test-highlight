@@ -1,220 +1,214 @@
-import { default as init, parseFile } from "astexplorer-syn";
-import synWasmUrl from "astexplorer-syn/astexplorer_syn_bg.wasm?url";
-import { default as dlv } from "dlv";
 import * as vscode from "vscode";
-import { walkAst } from "./ast";
+import {
+  clamp,
+  findRustTestModules,
+  findVitestBlocks,
+} from "./parser";
+
 
 export function activate(context: vscode.ExtensionContext) {
-	const isDev = context.extensionMode === vscode.ExtensionMode.Development;
-	let timeout: ReturnType<typeof setTimeout> | undefined = undefined;
-	let testDecoration: vscode.TextEditorDecorationType | undefined = undefined;
+  let timeout: ReturnType<typeof setTimeout> | undefined;
+  let rustTestDecoration: vscode.TextEditorDecorationType | undefined;
+  let typescriptVitestDecoration: vscode.TextEditorDecorationType | undefined;
+  let highlightingEnabled = true;
 
-	const synReady = fetch(synWasmUrl)
-		.then((response) => init(response))
-		.catch((e) => {
-			console.error(e);
-			vscode.window.showErrorMessage(
-				`Failed to load Rust language parser. Check extension host logs for details.`
-			);
-		});
+  let activeEditor = vscode.window.activeTextEditor;
 
-	let activeEditor = vscode.window.activeTextEditor;
+  if (import.meta.env.MODE === "development") {
+    import("./sample").then((module) => {
+      if (activeEditor != null) {
+        writeSampleRustToEditor(activeEditor, module.getSampleRustCode());
+        writeSampleTypeScriptToNewTab(module.getSampleTypeScriptCode());
+      }
+    });
+  }
 
-	if (import.meta.env.MODE === "development") {
-		writeSampleToEditor(activeEditor);
-	}
 
-	async function updateDecorations() {
-		if (!activeEditor) {
-			return;
-		}
+  async function updateDecorations(): Promise<void> {
+    if (activeEditor == null || highlightingEnabled === false) {
+      // Clear all decorations if highlighting is disabled
+      if (highlightingEnabled === false && activeEditor != null) {
+        if (rustTestDecoration != null) {
+          activeEditor.setDecorations(rustTestDecoration, []);
+        }
+        if (typescriptVitestDecoration != null) {
+          activeEditor.setDecorations(typescriptVitestDecoration, []);
+        }
+      }
+      return;
+    }
 
-		if (!(await synReady)) {
-			return;
-		}
+    const languageId = activeEditor.document.languageId;
+    const text = activeEditor.document.getText();
 
-		const text = activeEditor.document.getText();
-		const testBlocks: vscode.DecorationOptions[] = [];
+    switch (languageId) {
+      case "rust":
+        await updateRustDecorations(text);
+        // Clear TypeScript decorations if switching from TS/JS to Rust
+        if (typescriptVitestDecoration != null) {
+          activeEditor.setDecorations(typescriptVitestDecoration, []);
+        }
+        break;
 
-		try {
-			const ast = parseFile(text);
+      case "typescript":
+      case "javascript":
+        updateTypescriptDecorations(text);
+        // Clear Rust decorations if switching from Rust to TS/JS
+        if (rustTestDecoration != null) {
+          activeEditor.setDecorations(rustTestDecoration, []);
+        }
+        break;
+    }
+  }
 
-			walkAst(ast, (node, _parent): false | void => {
-				if (!activeEditor) {
-					return false;
-				}
+  async function updateRustDecorations(text: string): Promise<void> {
+    if (activeEditor == null) {
+      return;
+    }
 
-				if (dlv(node, "_type") === "ItemMod") {
-					// IDEA: should the name of the test module be configurable by a user?
-					if (dlv(node, "ident.to_string") === "tests") {
-						const startLine = dlv(node, "span.start.line");
-						const startCol = dlv(node, "span.start.column");
-						const endLine = dlv(node, "span.end.line");
-						const endCol = dlv(node, "span.end.column");
+    const testModules = findRustTestModules(text);
+    const testBlocks: Array<vscode.DecorationOptions> = testModules.map((module) => {
+      const startPos = new vscode.Position(
+        clamp(module.startLine, 0),
+        clamp(module.startColumn, 0),
+      );
+      const endPos = new vscode.Position(
+        clamp(module.endLine, 0),
+        clamp(module.endColumn, 0),
+      );
+      return { range: new vscode.Range(startPos, endPos) };
+    });
 
-						const hasRangeInfo =
-							typeof startLine === "number" &&
-							typeof startCol === "number" &&
-							typeof endLine === "number" &&
-							typeof endCol === "number";
+    if (testBlocks.length > 0) {
+      // we have tests to highlight, create the decoration if one does not yet exist
+      rustTestDecoration ??= vscode.window.createTextEditorDecorationType({
+        // use a themable color. See package.json for the declaration and default values.
+        backgroundColor: { id: "rustTestHighlight.backgroundColor" },
+        // IDEA: should this be user configurable?
+        isWholeLine: true,
+        rangeBehavior: vscode.DecorationRangeBehavior.ClosedClosed,
+      });
 
-						if (!hasRangeInfo) {
-							return false;
-						}
+      activeEditor.setDecorations(rustTestDecoration, testBlocks);
+    } else {
+      // we do not have tests to highlight, so get rid of the decorations if they still exist
+      rustTestDecoration?.dispose();
+      rustTestDecoration = undefined;
+    }
+  }
 
-						const startPos = new vscode.Position(clamp(startLine - 1, 0), clamp(startCol - 1, 0));
-						const endPos = new vscode.Position(clamp(endLine - 1, 0), clamp(endCol, 0));
+  function updateTypescriptDecorations(text: string): void {
+    if (activeEditor == null) {
+      return;
+    }
 
-						const decoration = { range: new vscode.Range(startPos, endPos) };
+    const vitestBlocks = findVitestBlocks(text);
+    const decorations: Array<vscode.DecorationOptions> = vitestBlocks.map(
+      (block) => {
+        const startPos = new vscode.Position(
+          clamp(block.startLine, 0),
+          clamp(block.startColumn, 0),
+        );
+        const endPos = new vscode.Position(
+          clamp(block.endLine, 0),
+          clamp(block.endColumn, 0),
+        );
+        return { range: new vscode.Range(startPos, endPos) };
+      },
+    );
 
-						testBlocks.push(decoration);
-					}
-				}
-			});
-		} catch (error) {
-			// TODO: allow a user to opt in to seeing errors?
-			if (isDev) {
-				console.error(error);
-			}
+    if (decorations.length > 0) {
+      typescriptVitestDecoration ??=
+        vscode.window.createTextEditorDecorationType({
+          backgroundColor: { id: "rustTestHighlight.backgroundColor" },
+          isWholeLine: true,
+          rangeBehavior: vscode.DecorationRangeBehavior.ClosedClosed,
+        });
 
-			// we failed to parse or walk the AST, so just bail and
-			// don't do anything with the decorations that exist
-			return;
-		}
+      activeEditor.setDecorations(typescriptVitestDecoration, decorations);
+    } else {
+      typescriptVitestDecoration?.dispose();
+      typescriptVitestDecoration = undefined;
+    }
+  }
 
-		if (testBlocks.length > 0) {
-			// we have tests to highlight, create the decoration if one does not yet exist
-			testDecoration ??= vscode.window.createTextEditorDecorationType({
-				// use a themable color. See package.json for the declaration and default values.
-				backgroundColor: { id: "rustTestHighlight.backgroundColor" },
-				// IDEA: should this be user configurable?
-				isWholeLine: true,
-				rangeBehavior: vscode.DecorationRangeBehavior.ClosedClosed,
-			});
+  function triggerUpdateDecorations(throttle = false): void {
+    if (timeout != null) {
+      clearTimeout(timeout);
+      timeout = undefined;
+    }
+    if (throttle) {
+      timeout = setTimeout(() => {
+        updateDecorations().catch(() => {
+          // Handle error silently
+        });
+      }, 500);
+    } else {
+      updateDecorations().catch(() => {
+        // Handle error silently
+      });
+    }
+  }
 
-			activeEditor.setDecorations(testDecoration, testBlocks);
-		} else {
-			// we do not have tests to highlight, so get rid of the decorations if they still exist
-			testDecoration?.dispose();
-			testDecoration = undefined;
-		}
-	}
+  if (activeEditor != null) {
+    triggerUpdateDecorations();
+  }
 
-	function triggerUpdateDecorations(throttle = false) {
-		if (timeout) {
-			clearTimeout(timeout);
-			timeout = undefined;
-		}
-		if (throttle) {
-			timeout = setTimeout(updateDecorations, 500);
-		} else {
-			updateDecorations();
-		}
-	}
+  vscode.window.onDidChangeActiveTextEditor(
+    (editor) => {
+      activeEditor = editor;
+      if (editor != null) {
+        triggerUpdateDecorations();
+      }
+    },
+    null,
+    context.subscriptions,
+  );
 
-	if (activeEditor) {
-		triggerUpdateDecorations();
-	}
+  vscode.workspace.onDidChangeTextDocument(
+    (event) => {
+      if (activeEditor != null && event.document === activeEditor.document) {
+        triggerUpdateDecorations(false);
+      }
+    },
+    null,
+    context.subscriptions,
+  );
 
-	vscode.window.onDidChangeActiveTextEditor(
-		(editor) => {
-			activeEditor = editor;
-			if (editor) {
-				triggerUpdateDecorations();
-			}
-		},
-		null,
-		context.subscriptions
-	);
-
-	vscode.workspace.onDidChangeTextDocument(
-		(event) => {
-			if (activeEditor && event.document === activeEditor.document) {
-				triggerUpdateDecorations(true);
-			}
-		},
-		null,
-		context.subscriptions
-	);
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      "rust-test-highlight.toggle-highlight",
+      () => {
+        highlightingEnabled = !highlightingEnabled;
+        const status = highlightingEnabled ? "enabled" : "disabled";
+        vscode.window.showInformationMessage(`Test highlighting ${status}`);
+        triggerUpdateDecorations();
+      },
+    ),
+  );
 }
 
 export function deactivate() {}
 
-function clamp(num: number, min?: number, max?: number) {
-	if (min !== undefined && num < min) {
-		return min;
-	}
-
-	if (max !== undefined && num > max) {
-		return max;
-	}
-
-	return num;
+function writeSampleRustToEditor(editor: vscode.TextEditor, content: string): void {
+  setTimeout(() => {
+    editor.edit((b) => {
+      b.insert(new vscode.Position(0, 0), content);
+    });
+  }, 1000);
 }
 
-function writeSampleToEditor(editor?: vscode.TextEditor) {
-	setTimeout(() => {
-		editor?.edit((b) => {
-			b.insert(
-				new vscode.Position(0, 0),
-				`
-	
-					
-// cool comment but not part of the module
-
-mod nested {
-	pub fn add() {}
-
-	mod nested_again {
-		/*
-		
-		some comments
-
-
-
-		*/
-
-		#[cfg(test)]
-		mod not_tests {
-				#[test]
-				fn test() {
-	
-				}
-		}
-
-		/// nested docs
-		/// wooooo
-		#[cfg(test)]
-		mod tests {
-				#[test]
-				fn test() {
-	
-				}
-		}
-	}
-
-	#[cfg(test)]
-	mod tests {
-			#[test]
-			fn test() {
-
-			}
-	}
-}
-
-/// some docs
-///
-///
-/// wooo
-#[cfg(test)]
-mod tests {
-		#[test]
-		fn test() {
-				
-		}
-}							
-			`
-			);
-		});
-	}, 500);
+function writeSampleTypeScriptToNewTab(content: string): void {
+  setTimeout(() => {
+    vscode.workspace
+      .openTextDocument({
+        language: "typescript",
+        content: content,
+      })
+      .then((doc) => {
+        vscode.window.showTextDocument(doc, {
+          viewColumn: vscode.ViewColumn.Beside,
+        });
+      });
+  }, 2000);
 }
